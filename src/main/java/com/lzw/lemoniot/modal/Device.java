@@ -1,7 +1,10 @@
 package com.lzw.lemoniot.modal;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
 import javax.persistence.*;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -13,8 +16,9 @@ import java.util.Set;
 @Entity
 public class Device {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "system-uuid")
+    private String id;
 
     private String name;
 
@@ -22,14 +26,17 @@ public class Device {
 
     private boolean isGetway;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "devices")
+    @NotFound(action = NotFoundAction.IGNORE)
     private Set<User> users;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Room room;
+
 
     public Device() {
     }
+
 
     public Set<User> getUsers() {
         return users;
@@ -47,11 +54,11 @@ public class Device {
         this.room = room;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -79,24 +86,5 @@ public class Device {
         isGetway = getway;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Device device = (Device) o;
-        return isGetway == device.isGetway &&
-                Objects.equals(id, device.id) &&
-                Objects.equals(name, device.name) &&
-                Objects.equals(type, device.type);
-    }
 
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(id, name, type, isGetway);
-    }
 }

@@ -1,7 +1,10 @@
 package com.lzw.lemoniot.dao;
 
 import com.lzw.lemoniot.modal.Device;
+import com.lzw.lemoniot.modal.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Set;
 
 /**
  * DeviceRepository
@@ -11,4 +14,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  **/
 public interface DeviceRepository extends JpaRepository<Device, Long> {
 
+    boolean existsDeviceById(String deviceId);
+
+    boolean existsByUsers(Set<User> users);
 }

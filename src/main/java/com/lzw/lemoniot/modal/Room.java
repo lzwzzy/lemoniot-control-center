@@ -1,7 +1,8 @@
 package com.lzw.lemoniot.modal;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -14,8 +15,9 @@ import java.util.Set;
 public class Room {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    @GenericGenerator(name = "system-uuid", strategy = "uuid")
+    @GeneratedValue(generator = "system-uuid")
+    private String id;
 
     private String name;
 
@@ -23,16 +25,23 @@ public class Room {
 
     private String remarks;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany
+    @JoinTable(name = "room_devices", joinColumns = {@JoinColumn(name = "room_id")}, inverseJoinColumns = {@JoinColumn(name = "device_id")})
     private Set<Device> devices;
 
+    public Set<Device> getDevices() {
+        return devices;
+    }
 
+    public void setDevices(Set<Device> devices) {
+        this.devices = devices;
+    }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -60,33 +69,7 @@ public class Room {
         this.remarks = remarks;
     }
 
-    public Set<Device> getDevices() {
-        return devices;
-    }
 
-    public void setDevices(Set<Device> devices) {
-        this.devices = devices;
-    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Room)) {
-            return false;
-        }
-        Room room = (Room) o;
-        return Objects.equals(id, room.id) &&
-                Objects.equals(name, room.name) &&
-                Objects.equals(type, room.type) &&
-                Objects.equals(remarks, room.remarks) &&
-                Objects.equals(devices, room.devices);
-    }
 
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(id, name, type, remarks, devices);
-    }
 }
