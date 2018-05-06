@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/lemon?serverTimezone=UTC&useSSL=false
     username: root
-    password: root
+    password: bk@321
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -16,7 +16,7 @@ wechat:
     token: lzwzzy0602
     aesKey:
 server:
-  port: 8080
+  port: 8081
 
 
 
