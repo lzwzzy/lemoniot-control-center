@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lzw.lemoniot.Mqtt;
 import com.lzw.lemoniot.builder.TextBuilder;
+import com.lzw.lemoniot.dao.DeviceRepository;
 import com.lzw.lemoniot.modal.Device;
 import com.lzw.lemoniot.modal.User;
 import com.lzw.lemoniot.service.DeviceService;
@@ -36,6 +37,9 @@ public class DeviceMsgHandler extends AbstractHandler {
     private DeviceService deviceService;
 
     @Autowired
+    private DeviceRepository deviceRepository;
+
+    @Autowired
     private Mqtt mqtt;
 
     @Override
@@ -57,29 +61,38 @@ public class DeviceMsgHandler extends AbstractHandler {
         Set<Device> devices = new HashSet<>();
         devices.add(device);
         user.setDevices(devices);
+        if (!deviceService.deviceIsExists(device.getWechatDeviceId())){
+            device = deviceRepository.save(device);
+        }else {
+            device = deviceRepository.findByWechatDeviceId(wxMpXmlMessage.getDeviceId());
+        }
+        MqttClient client = mqtt.getClient();
+        MqttTopic mqttTopic = client.getTopic("device/event");
+        MqttMessage mqttMessage = new MqttMessage();
+
         switch (wxMpXmlMessage.getEvent()) {
             case "bind":
                 deviceService.bindDevice(user);
                 logger.info("绑定成功");
-                MqttClient client = mqtt.getClient();
-                MqttTopic mqttTopic = client.getTopic("device/event");
-                MqttMessage mqttMessage = new MqttMessage();
                 mqttMessage.setQos(1);
                 mqttMessage.setPayload("ok".getBytes());
                 mqttMessage.setRetained(true);
-                try {
-                    //通知设备绑定成功
-                    mqttTopic.publish(mqttMessage);
-                } catch (MqttException e) {
-                    e.printStackTrace();
-                }
                 return new TextBuilder().build("ok", wxMpXmlMessage, wxMpService);
             case "unbind":
-                deviceService.unbindDevice(user);
+                deviceService.unbindDevice(user, device.getId());
                 logger.info("解绑成功");
+                mqttMessage.setQos(1);
+                mqttMessage.setPayload("ok".getBytes());
+                mqttMessage.setRetained(true);
                 break;
             default:
                 break;
+        }
+        try {
+            //通知设备绑定成功
+            mqttTopic.publish(mqttMessage);
+        } catch (MqttException e) {
+            e.printStackTrace();
         }
         return null;
     }

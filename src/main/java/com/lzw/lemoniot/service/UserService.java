@@ -15,7 +15,7 @@ public interface UserService {
      * @param user user
      * @return user
      */
-    void saveUser(User user);
+    User saveUser(User user);
 
     /**
      * 根据openId（微信）查找用户

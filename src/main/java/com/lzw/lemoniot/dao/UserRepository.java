@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author lzw
  * @date 2018/4/9 0:47
  **/
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, String> {
 
     
-    void findById(Integer id);
+    User findById(String id);
 
 
     User findByOpenId(String openId);
