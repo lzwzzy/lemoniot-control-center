@@ -19,27 +19,35 @@ public class User {
     @GeneratedValue(generator = "system-uuid")
     private String id;
 
-    @Column(nullable = true)
     private String name;
 
-    @Column(nullable = true)
     private String password;
 
-    @Column(nullable = true)
     private String phoneNumber;
 
-    @Column(nullable = true)
     private String email;
 
+    @Column(unique = true)
     private String openId;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_devices", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "device_id")})
     private Set<Device> devices;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_rooms", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "room_id")})
     private Set<Room> rooms;
+
+    public User() {
+    }
+
+    public Set<Room> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(Set<Room> rooms) {
+        this.rooms = rooms;
+    }
 
     public Set<Device> getDevices() {
         return devices;

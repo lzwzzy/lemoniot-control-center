@@ -15,8 +15,10 @@ wechat:
     secret: de706f5f100f55ed2ea1149e404e7716
     token: lzwzzy0602
     aesKey:
+mqtt:
+  host: tcp://127.0.0.1:61613
 server:
-  port: 8080
+  port: 8081
 
 
 

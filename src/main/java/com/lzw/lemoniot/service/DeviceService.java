@@ -12,5 +12,11 @@ public interface DeviceService {
     /**
      * 绑定设备
      */
-    void bindDevice(User user);
+    User bindDevice(User user);
+
+    /**
+     * 解绑设备
+     * @param user
+     */
+    void unbindDevice(User user);
 }
