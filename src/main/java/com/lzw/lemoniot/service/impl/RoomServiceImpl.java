@@ -33,7 +33,7 @@ public class RoomServiceImpl implements RoomService {
      */
     @Override
     public List<Room> getRooms(String userId) {
-        User user_rooms = userRepository.findById(userId);
+        User user_rooms = userRepository.getById(userId);
         if (user_rooms != null && !StringUtils.isBlank(userId)){
             Set<Room> rooms = user_rooms.getRooms();
             if (rooms != null) {

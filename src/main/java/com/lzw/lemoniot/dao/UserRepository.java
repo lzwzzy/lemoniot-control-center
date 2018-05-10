@@ -3,6 +3,8 @@ package com.lzw.lemoniot.dao;
 import com.lzw.lemoniot.modal.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 /**
  * @author lzw
  * @date 2018/4/9 0:47
@@ -10,7 +12,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRepository extends JpaRepository<User, String> {
 
     
-    User findById(String id);
+
+    User getById(String id);
 
 
     User findByOpenId(String openId);

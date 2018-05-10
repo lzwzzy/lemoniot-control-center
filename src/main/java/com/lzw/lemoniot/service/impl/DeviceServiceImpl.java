@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -64,7 +65,7 @@ public class DeviceServiceImpl implements DeviceService {
      */
     @Override
     public List<Device> getDevices(String userId) {
-        User user_devices = userRepository.findById(userId);
+        User user_devices = userRepository.getById(userId);
         if (user_devices != null && !StringUtils.isBlank(userId)){
             Set<Device> devices = user_devices.getDevices();
             if (devices != null) {
