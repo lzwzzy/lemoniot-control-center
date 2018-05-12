@@ -9,12 +9,15 @@ import java.util.Optional;
  * @author lzw
  * @date 2018/4/9 0:47
  **/
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
+
+    boolean existsByOpenId(String openId);
     
 
-    User getById(String id);
+    User findByUserId(Long id);
 
 
     User findByOpenId(String openId);
+
 }

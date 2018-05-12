@@ -6,7 +6,10 @@ import com.google.gson.reflect.TypeToken;
 import com.lzw.lemoniot.Mqtt;
 import com.lzw.lemoniot.builder.TextBuilder;
 import com.lzw.lemoniot.dao.DeviceRepository;
+import com.lzw.lemoniot.dao.RoomRepository;
+import com.lzw.lemoniot.dao.UserRepository;
 import com.lzw.lemoniot.modal.Device;
+import com.lzw.lemoniot.modal.Room;
 import com.lzw.lemoniot.modal.User;
 import com.lzw.lemoniot.service.DeviceService;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -40,6 +43,12 @@ public class DeviceMsgHandler extends AbstractHandler {
     private DeviceRepository deviceRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RoomRepository roomRepository;
+
+    @Autowired
     private Mqtt mqtt;
 
     @Override
@@ -52,15 +61,18 @@ public class DeviceMsgHandler extends AbstractHandler {
         Gson gson = new Gson();
         Device device = gson.fromJson(device_info, new TypeToken<Device>() {}.getType());
         User user = new User();
-        user.setOpenId(wxMpXmlMessage.getOpenId());
-        user.setName(wxMpXmlMessage.getLocationName());
+        if (userRepository.existsByOpenId(wxMpXmlMessage.getOpenId())){
+            user = userRepository.findByOpenId(wxMpXmlMessage.getOpenId());
+        }else {
+            user.setOpenId(wxMpXmlMessage.getOpenId());
+            user.setName(wxMpXmlMessage.getLocationName());
+            user = userRepository.saveAndFlush(user);
+        }
         if (device == null) {
             device = new Device();
         }
         device.setWechatDeviceId(wxMpXmlMessage.getDeviceId());
-        Set<Device> devices = new HashSet<>();
-        devices.add(device);
-        user.setDevices(devices);
+
         if (!deviceService.deviceIsExists(device.getWechatDeviceId())){
             device = deviceRepository.save(device);
         }else {
@@ -72,14 +84,17 @@ public class DeviceMsgHandler extends AbstractHandler {
 
         switch (wxMpXmlMessage.getEvent()) {
             case "bind":
-                deviceService.bindDevice(user);
+                deviceService.bindDeviceToUser(device, user);
+                Room room = roomRepository.findByUserAndType(user, "默认房间类型");
+                device.setRoom(room);
+                deviceService.bindDeviceToRoom(device, room);
                 logger.info("绑定成功");
                 mqttMessage.setQos(1);
                 mqttMessage.setPayload("ok".getBytes());
                 mqttMessage.setRetained(true);
                 return new TextBuilder().build("ok", wxMpXmlMessage, wxMpService);
             case "unbind":
-                deviceService.unbindDevice(user, device.getId());
+                deviceService.unbindDeviceFromUser(user, device);
                 logger.info("解绑成功");
                 mqttMessage.setQos(1);
                 mqttMessage.setPayload("ok".getBytes());

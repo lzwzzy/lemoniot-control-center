@@ -1,9 +1,11 @@
 package com.lzw.lemoniot.modal;
 
-import org.hibernate.annotations.GenericGenerator;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.io.Serializable;
 
 /**
  * Device
@@ -12,11 +14,9 @@ import java.util.Set;
  * @date 2018/4/9 12:05
  **/
 @Entity
-public class Device {
-    @Id
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @GeneratedValue(generator = "system-uuid")
-    private String id;
+public class Device implements Serializable {
+
+    private Long deviceId;
 
     private String name;
 
@@ -27,17 +27,15 @@ public class Device {
     @Column(unique = true)
     private String wechatDeviceId;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST}, fetch = FetchType.EAGER)
-    private Set<User> users;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.EAGER)
+    private User user;
+
+
     private Room room;
 
 
     public Device() {
     }
-
-
 
 
     public String getWechatDeviceId() {
@@ -48,14 +46,22 @@ public class Device {
         this.wechatDeviceId = wechatDeviceId;
     }
 
-    public Set<User> getUsers() {
-        return users;
+    @JsonBackReference
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JoinColumn(name = "user_id")
+    public User getUser() {
+        return user;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setUser(User user) {
+        this.user = user;
     }
 
+
+    @JsonBackReference
+    @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "room_id")
     public Room getRoom() {
         return room;
     }
@@ -64,12 +70,14 @@ public class Device {
         this.room = room;
     }
 
-    public String getId() {
-        return id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getDeviceId() {
+        return deviceId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setDeviceId(Long deviceId) {
+        this.deviceId = deviceId;
     }
 
     public String getName() {

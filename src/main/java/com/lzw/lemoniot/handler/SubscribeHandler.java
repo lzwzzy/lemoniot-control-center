@@ -41,6 +41,7 @@ public class SubscribeHandler extends AbstractHandler {
       User user = new User();
       user.setOpenId(userWxInfo.getOpenId());
       user.setName(userWxInfo.getNickname());
+      user.setHeadImgUrl(userWxInfo.getHeadImgUrl());
       userService.saveUser(user);
     }
 

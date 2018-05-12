@@ -1,8 +1,7 @@
 package com.lzw.lemoniot.modal;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -12,12 +11,10 @@ import java.util.Set;
  * @date 2018/4/9 11:38
  **/
 @Entity
-public class User {
+public class User implements Serializable {
 
-    @Id
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @GeneratedValue(generator = "system-uuid")
-    private String id;
+
+    private Long userId;
 
     private String name;
 
@@ -27,20 +24,20 @@ public class User {
 
     private String email;
 
+    private String headImgUrl;
+
     @Column(unique = true)
     private String openId;
 
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.PERSIST}, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_devices", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "device_id")})
     private Set<Device> devices;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_rooms", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "room_id")})
+
     private Set<Room> rooms;
 
     public User() {
     }
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     public Set<Room> getRooms() {
         return rooms;
     }
@@ -49,6 +46,7 @@ public class User {
         this.rooms = rooms;
     }
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     public Set<Device> getDevices() {
         return devices;
     }
@@ -65,13 +63,14 @@ public class User {
         this.password = password;
     }
 
-
-    public String getId() {
-        return id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -106,5 +105,12 @@ public class User {
         this.openId = openId;
     }
 
+    public String getHeadImgUrl() {
+        return headImgUrl;
+    }
 
-   }
+    public void setHeadImgUrl(String headImgUrl) {
+        this.headImgUrl = headImgUrl;
+    }
+
+}

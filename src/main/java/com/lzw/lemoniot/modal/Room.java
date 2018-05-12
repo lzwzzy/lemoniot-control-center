@@ -1,8 +1,12 @@
 package com.lzw.lemoniot.modal;
 
-import org.hibernate.annotations.GenericGenerator;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -12,12 +16,10 @@ import java.util.Set;
  * @date 2018/4/9 12:07
  **/
 @Entity
-public class Room {
+public class Room implements Serializable {
 
-    @Id
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @GeneratedValue(generator = "system-uuid")
-    private String id;
+
+    private Long roomId;
 
     private String name;
 
@@ -25,18 +27,18 @@ public class Room {
 
     private String remarks;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "room_devices", joinColumns = {@JoinColumn(name = "room_id")}, inverseJoinColumns = {@JoinColumn(name = "device_id")})
+
     private Set<Device> devices;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.EAGER)
+
     private User user;
 
     public Room() {
     }
 
-
-
+    @JsonBackReference
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     public User getUser() {
         return user;
     }
@@ -45,6 +47,7 @@ public class Room {
         this.user = user;
     }
 
+    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy = "room")
     public Set<Device> getDevices() {
         return devices;
     }
@@ -53,12 +56,14 @@ public class Room {
         this.devices = devices;
     }
 
-    public String getId() {
-        return id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getRoomId() {
+        return roomId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
     }
 
     public String getName() {
@@ -84,7 +89,6 @@ public class Room {
     public void setRemarks(String remarks) {
         this.remarks = remarks;
     }
-
 
 
 

@@ -1,13 +1,14 @@
 package com.lzw.lemoniot.service.impl;
 
 import com.lzw.lemoniot.dao.DeviceRepository;
+import com.lzw.lemoniot.dao.RoomRepository;
 import com.lzw.lemoniot.dao.UserRepository;
 import com.lzw.lemoniot.e.ErrorEnum;
 import com.lzw.lemoniot.exception.LemonException;
 import com.lzw.lemoniot.modal.Device;
+import com.lzw.lemoniot.modal.Room;
 import com.lzw.lemoniot.modal.User;
 import com.lzw.lemoniot.service.DeviceService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +32,9 @@ public class DeviceServiceImpl implements DeviceService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    RoomRepository roomRepository;
+
     /**
      * 绑定设备
      *
@@ -38,9 +42,10 @@ public class DeviceServiceImpl implements DeviceService {
      *             device 设备
      */
     @Override
-    public User bindDevice(User user) {
+    public Device bindDeviceToUser(Device device, User user) {
         try {
-            return userRepository.save(user);
+            device.setUser(user);
+            return deviceRepository.saveAndFlush(device);
         } catch (Exception e) {
             throw new LemonException(ErrorEnum.System.SYSTEM_ERROR, e);
         }
@@ -52,9 +57,32 @@ public class DeviceServiceImpl implements DeviceService {
      * @param user
      */
     @Override
-    public void unbindDevice(User user, String deviceId) {
-        user.getDevices().remove(deviceId);
+    public void unbindDeviceFromUser(User user, Device device) {
+        user.getDevices().remove(device);
         userRepository.saveAndFlush(user);
+    }
+
+    /**
+     * 绑定设备到房间
+     *
+     * @param
+     */
+    @Override
+    public Device bindDeviceToRoom(Device device, Room room) {
+        device.setRoom(room);
+        return deviceRepository.saveAndFlush(device);
+    }
+
+    /**
+     * 解绑设备从房间
+     *
+     * @param room 房间
+     * @param device 设备
+     */
+    @Override
+    public void unbindDeviceFromRoom(Room room, Device device) {
+        room.getDevices().remove(device);
+        roomRepository.saveAndFlush(room);
     }
 
     /**
@@ -64,12 +92,30 @@ public class DeviceServiceImpl implements DeviceService {
      * @return
      */
     @Override
-    public List<Device> getDevices(String userId) {
-        User user_devices = userRepository.getById(userId);
-        if (user_devices != null && !StringUtils.isBlank(userId)){
-            Set<Device> devices = user_devices.getDevices();
+    public List<Device> getDevices(Long userId) {
+        User userDevices = userRepository.findByUserId(userId);
+        if (userDevices != null && userId !=null){
+            Set<Device> devices = userDevices.getDevices();
             if (devices != null) {
                 return new ArrayList<>(devices);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取该用户下所有房间
+     *
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<Room> getRooms(Long userId) {
+        User userRooms = userRepository.findByUserId(userId);
+        if (userRooms != null && userId !=null){
+            Set<Room> rooms = userRooms.getRooms();
+            if (rooms != null) {
+                return new ArrayList<>(rooms);
             }
         }
         return null;

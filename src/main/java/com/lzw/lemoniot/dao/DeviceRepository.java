@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author lzw
  * @date 2018/4/9 14:45
  **/
-public interface DeviceRepository extends JpaRepository<Device, String> {
+public interface DeviceRepository extends JpaRepository<Device, Long> {
     boolean existsByWechatDeviceId(String wechatDeviceId);
 
     Device findByWechatDeviceId(String wechatDeviceId);

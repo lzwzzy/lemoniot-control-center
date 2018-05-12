@@ -16,6 +16,6 @@ public interface RoomService {
      * @param userId
      * @return
      */
-    List<Room> getRooms(String userId);
+    List<Room> getRooms(Long userId);
 
 }
