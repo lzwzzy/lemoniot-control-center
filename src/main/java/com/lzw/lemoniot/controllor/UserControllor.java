@@ -114,7 +114,7 @@ public class UserControllor {
     }
 
     /**
-     * 获取所有设备
+     * 获取所有房间
      * @param userId 用户id
      * @return
      */

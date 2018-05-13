@@ -36,7 +36,7 @@ public class Room implements Serializable {
     public Room() {
     }
 
-    @JsonBackReference
+
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     public User getUser() {

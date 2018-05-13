@@ -18,4 +18,12 @@ public interface RoomService {
      */
     List<Room> getRooms(Long userId);
 
+    /**
+     * 添加房间
+     * @param userId
+     * @param room
+     * @return
+     */
+    Room addRoom(Long userId, Room room);
+
 }

@@ -44,4 +44,19 @@ public class RoomServiceImpl implements RoomService {
         }
         return null;
     }
+
+    /**
+     * 添加房间
+     *
+     * @param userId
+     * @param room
+     * @return
+     */
+    @Override
+    public Room addRoom(Long userId, Room room) {
+        User user = new User();
+        user.setUserId(userId);
+        room.setUser    (user);
+        return roomRepository.saveAndFlush(room);
+    }
 }

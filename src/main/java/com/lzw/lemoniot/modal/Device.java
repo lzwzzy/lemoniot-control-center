@@ -46,7 +46,7 @@ public class Device implements Serializable {
         this.wechatDeviceId = wechatDeviceId;
     }
 
-    @JsonBackReference
+
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @NotFound(action = NotFoundAction.IGNORE)
     @JoinColumn(name = "user_id")
@@ -59,7 +59,7 @@ public class Device implements Serializable {
     }
 
 
-    @JsonBackReference
+
     @ManyToOne(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
     @JoinColumn(name = "room_id")
     public Room getRoom() {
