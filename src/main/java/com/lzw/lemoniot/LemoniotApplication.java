@@ -14,7 +14,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableAsync
 @EnableSwagger2
 public class LemoniotApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(LemoniotApplication.class, args);
     }

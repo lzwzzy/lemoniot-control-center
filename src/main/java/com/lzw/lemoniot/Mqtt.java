@@ -43,10 +43,22 @@ public class Mqtt {
         options.setConnectionTimeout(10);
         // 设置会话心跳时间 单位为秒 服务器会每隔1.5*20秒的时间向客户端发送个消息判断客户端是否在线，但这个方法并没有重连的机制
         options.setKeepAliveInterval(20);
+
+        //自动重连
+        options.setAutomaticReconnect(true);
         // 设置回调
         client.setCallback(new PushCallback());
         //连接
         client.connect(options);
+    }
+
+    public void disConnect(){
+        //连接
+        try {
+            client.disconnect();
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
     }
 
     public MqttClient getClient() {

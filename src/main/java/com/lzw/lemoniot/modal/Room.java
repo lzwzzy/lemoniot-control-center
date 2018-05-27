@@ -3,6 +3,7 @@ package com.lzw.lemoniot.modal;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -36,7 +37,7 @@ public class Room implements Serializable {
     public Room() {
     }
 
-
+    @JsonBackReference(value = "user")
     @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     public User getUser() {
@@ -46,6 +47,7 @@ public class Room implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
+
 
     @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL,mappedBy = "room")
     public Set<Device> getDevices() {

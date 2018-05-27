@@ -1,6 +1,7 @@
 package com.lzw.lemoniot.dao;
 
 import com.lzw.lemoniot.modal.Device;
+import com.lzw.lemoniot.modal.Room;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -23,5 +24,5 @@ public interface DeviceRepository extends JpaRepository<Device, Long>, JpaSpecif
 
     @Modifying
     @Query("update Device d set d.room = ?1 where d.deviceId in ?2")
-    List<Device> updateDevicesRoomByIds(Long roomId, List<Long> deviceIds);
+    void updateDevicesRoomByIds(Room room, List<Long> deviceIds);
 }

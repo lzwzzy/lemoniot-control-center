@@ -36,7 +36,7 @@ public class RoomServiceImpl implements RoomService {
      */
     @Override
     public List<Room> getRooms(Long userId) {
-        User user_rooms = userRepository.findByUserId(userId);
+        User user_rooms = userRepository.findByUserIdOrderByUserIdAsc(userId);
 
         Set<Room> rooms = user_rooms.getRooms();
         if (rooms != null) {

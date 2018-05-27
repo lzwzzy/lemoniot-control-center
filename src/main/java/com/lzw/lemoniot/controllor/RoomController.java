@@ -7,6 +7,8 @@ import com.lzw.lemoniot.modal.Device;
 import com.lzw.lemoniot.modal.Room;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.ListUtils;
+import org.thymeleaf.util.SetUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -49,18 +51,30 @@ public class RoomController {
         }
     }
 
+    @PostMapping(value = "/addRoom")
+    public R addRoom(@RequestBody Room room){
+        room = roomRepository.saveAndFlush(room);
+        return R.ok().put("room", room);
+    }
+
     /**
      * 批量绑定设备到房间
      *
      * @param roomId
-     * @param deviceIds
+     * @param room
      * @return
      */
     @PostMapping(value = "/{roomId}/save")
     public R saveRoom(@PathVariable String roomId,
-                      @RequestBody List<Long> deviceIds) {
-        List<Device> devices = deviceRepository.updateDevicesRoomByIds(Long.parseLong(roomId), deviceIds);
-        return R.ok().put("device", devices);
+                      @RequestBody Room room) {
+        if (!SetUtils.isEmpty(room.getDevices())){
+            List<Long> deviceIds = room.getDevices().stream().map(device -> device.getDeviceId()).collect(Collectors.toList());
+            deviceRepository.updateDevicesRoomByIds(room, deviceIds);
+            room.setDevices(null);
+            room = roomRepository.saveAndFlush(room);
+            return R.ok().put("room",room);
+        }
+        return R.error();
     }
 
 

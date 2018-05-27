@@ -93,7 +93,7 @@ public class DeviceServiceImpl implements DeviceService {
      */
     @Override
     public List<Device> getDevices(Long userId) {
-        User userDevices = userRepository.findByUserId(userId);
+        User userDevices = userRepository.findByUserIdOrderByUserIdAsc(userId);
         if (userDevices != null && userId !=null){
             Set<Device> devices = userDevices.getDevices();
             if (devices != null) {
@@ -111,7 +111,7 @@ public class DeviceServiceImpl implements DeviceService {
      */
     @Override
     public List<Room> getRooms(Long userId) {
-        User userRooms = userRepository.findByUserId(userId);
+        User userRooms = userRepository.findByUserIdOrderByUserIdAsc(userId);
         if (userRooms != null && userId !=null){
             Set<Room> rooms = userRooms.getRooms();
             if (rooms != null) {

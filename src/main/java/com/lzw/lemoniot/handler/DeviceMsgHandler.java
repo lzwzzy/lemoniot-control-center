@@ -66,6 +66,7 @@ public class DeviceMsgHandler extends AbstractHandler {
         }else {
             user.setOpenId(wxMpXmlMessage.getOpenId());
             user.setName(wxMpXmlMessage.getLocationName());
+            user.setHeadImgUrl(wxMpXmlMessage.getPicUrl());
             user = userRepository.saveAndFlush(user);
         }
         if (device == null) {
@@ -94,6 +95,7 @@ public class DeviceMsgHandler extends AbstractHandler {
                 mqttMessage.setRetained(true);
                 return new TextBuilder().build("ok", wxMpXmlMessage, wxMpService);
             case "unbind":
+//                if (deviceRepository.existsByWechatDeviceId(device.getWechatDeviceId()))
                 deviceService.unbindDeviceFromUser(user, device);
                 logger.info("解绑成功");
                 mqttMessage.setQos(1);

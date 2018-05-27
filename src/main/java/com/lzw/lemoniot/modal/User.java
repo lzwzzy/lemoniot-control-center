@@ -1,5 +1,7 @@
 package com.lzw.lemoniot.modal;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
@@ -37,6 +39,7 @@ public class User implements Serializable {
     public User() {
     }
 
+
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     public Set<Room> getRooms() {
         return rooms;
@@ -45,6 +48,7 @@ public class User implements Serializable {
     public void setRooms(Set<Room> rooms) {
         this.rooms = rooms;
     }
+
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     public Set<Device> getDevices() {
